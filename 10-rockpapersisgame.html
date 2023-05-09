@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <Title>Rock Paper Siccors </Title>
+        <style>
+            body{
+                background-color: rgb(25, 25, 25);
+                color: white;
+                font-family: Arial;
+            }
+            .title{
+                font-size: 30px;
+                
+            }
+            .move-icon{
+                height: 50px;
+                
+            }
+            .move-button{
+                background-color: transparent;
+                border: 3px solid white;
+                width: 120px;
+                height: 120px;
+                border-radius: 60px;
+                margin-right: 10px;
+                cursor: pointer;
+                
+            }
+            .result{
+                font-size: 25px;
+                font-weight: bold;
+                margin-top: 50px;
+            }
+            .reset-score-bttn{
+                padding: 15px;
+                font-family: Arial;
+                font-size: 20px;
+                border-width: 0px;
+                cursor: pointer;
+            }
+
+      
+        </style>
+    </head>
+    <body>
+        <h1 class="title">Rock Paper Scissors</h1>
+
+        <button class="move-button" title="rockBtn" onclick="            
+            let userChoice = `Rock`;
+            let computerChoice = cpuChoiceFunc();
+            let winCalc =loseOrWinCalc(computerChoice, userChoice);
+            let msg2 = gameMssg(winCalc, userChoice, computerChoice);
+            alert(msg2);          
+            ">
+         <img src="images/rock-emoji.png" class="move-icon">
+        </button>
+
+        <button class="move-button" title ="pprBtn" onclick="
+            userChoice = 'Paper';
+            computerChoice = cpuChoiceFunc();
+            winCalc =loseOrWinCalc(computerChoice, userChoice);
+            msg2 = gameMssg(winCalc, userChoice, computerChoice);
+            alert(msg2);                    
+            ">
+        <img src="images/paper-emoji.png" class="move-icon"></button>
+
+        <button class="move-button" title='sisBtn'onclick="           
+            userChoice = `Scissors`;
+            computerChoice = cpuChoiceFunc();
+            winCalc =loseOrWinCalc(computerChoice, userChoice);
+            msg2 = gameMssg(winCalc, userChoice, computerChoice);
+            alert(msg2);                    
+            ">
+         <img src="images/scissors-emoji.png" class="move-icon">
+        </button>
+
+        <p class="js-gameStatus result"></p>
+        <p class="js-scorecard">Score</p>
+        <p class="js-choiceStatus"></p>
+
+        <button class="reset-score-bttn" title="Reset Button" onclick="
+            localStorage.removeItem('score')
+            location.reload();
+            ">
+
+            Reset Score
+        </button>
+    </body>
+    <script>
+        const choiceStatusElem = document.querySelector('.js-choiceStatus')
+        const gameStatusElem = document.querySelector('.js-gameStatus')
+        let score = JSON.parse(localStorage.getItem('score'));
+        let scorecardElem = document.querySelector('.js-scorecard');
+        if (!score){
+            score = {
+                Wins : 0,
+                Losses : 0,
+                Ties : 0
+            }
+            console.log(score)
+        }
+        updateScoreCard();
+        localStorage.setItem('score',JSON.stringify(score))     
+        function gameMssg(looseOrWin, userChoice, cpuChoice){            
+            if (looseOrWin === `Win`){
+                 alertMsg = `Congratulations, You won! You chose ${userChoice} and computer chose ${cpuChoice}.`;
+           
+            }
+            else if(looseOrWin === `Lose`){
+                alertMsg = `Sorry you lost. You chose ${userChoice} and computer chose ${cpuChoice}`;
+            }
+            else if(looseOrWin === `Tie`){
+                alertMsg = `Oops, you tied. You chose ${userChoice} and computer chose ${cpuChoice}`;
+            }
+            return alertMsg;
+        }
+ 
+        function cpuChoiceFunc(){
+            let rdmNum = Math.random();
+            console.log(rdmNum);
+            if (rdmNum > .33 && rdmNum < .66){
+                cpuChoice = 'Rock';            
+            }
+            else if(rdmNum > 0.0 && rdmNum < .33){
+                cpuChoice = `Paper`;
+            }
+            else if (rdmNum > .66 && rdmNum < .99){
+                cpuChoice = `Scissors`;
+            }
+            return cpuChoice;
+        }
+
+        function loseOrWinCalc(cpuChoice, userChoice){
+            console.log(userChoice);
+            console.log(cpuChoice);
+            if (userChoice === `Rock` && cpuChoice === 'Paper'){
+                looseOrWin = 'Lose'
+            }
+            else if (userChoice === `Rock` && cpuChoice === 'Scissors'){
+                looseOrWin = 'Win'
+            }
+            else if (userChoice === `Rock` && cpuChoice =='Rock'){
+                looseOrWin = `Tie`
+            }
+            else if (userChoice == `Paper` && cpuChoice =='Scissors'){
+                looseOrWin = `Lose`
+            }
+            else if (userChoice == `Paper` && cpuChoice =='Rock'){
+                looseOrWin = `Win`
+            }
+            else if (userChoice == `Paper` && cpuChoice =='Paper'){
+                looseOrWin = `Tie`
+            }
+            else if (userChoice == `Scissors` && cpuChoice =='Rock'){
+                looseOrWin = `Lose`
+            }
+            else if (userChoice == `Scissors` && cpuChoice =='Paper'){
+                looseOrWin = `Win`
+            }
+            else if (userChoice == `Scissors` && cpuChoice =='Scissors'){
+                looseOrWin = `Tie`
+            }
+            choiceStatusElem.innerText = `You ${userChoice} - ${cpuChoice} Computer`;
+            gameStatusElem.innerText = `You ${looseOrWin}`;
+            updateScore(looseOrWin);
+            console.log(looseOrWin);
+            return looseOrWin;
+        }
+        
+
+        
+        function updateScore(looseOrWin){
+            if (looseOrWin === "Tie"){
+                score.Ties = score.Ties + 1; 
+            }
+            else if (looseOrWin === "Win"){
+                score.Wins = score.Wins + 1;
+            }
+            else if (looseOrWin === "Lose"){
+                score.Losses = score.Losses + 1;
+            }
+           localStorage.setItem('score',JSON.stringify(score));
+           updateScoreCard();
+
+        }
+
+        function updateScoreCard(){
+            scorecardElem.innerText = `Wins: ${score.Wins}, Ties: ${score.Ties}, Losses: ${score.Losses}`;
+        }
+
+
+        
+        
+    
+        
+
+        
+
+
+
+     
+
+     
+
+
+        
+    </script>
+</html>
